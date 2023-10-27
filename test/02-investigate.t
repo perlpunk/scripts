@@ -74,7 +74,7 @@ openqa-cli() {
     # POST jobs/id/comments
     elif [[ $@ == "-X POST jobs/10030/comments text=Starting investigation for job 10031" ]]; then
         echo '{"id": 1234}'
-    elif [[ $@ =~ $'-X POST jobs/10031/comments text=Automatic investigation jobs for job 10031:\n\nfoo' ]]; then
+    elif [[ $@ =~ $'-X POST jobs/10031/comments text=### Automatic investigation jobs for job 10031:\n\nfoo' ]]; then
         echo true > "$comment_for_job_31_created"
     elif [[ $@ == "-X POST jobs/10032/comments text=Starting investigation for job 10032" ]]; then
         echo '{"id": 1237}'
@@ -88,20 +88,37 @@ openqa-cli() {
         warn "Commenting 3003 ($@)"
         exit 99
 
+    # PUT jobs/id/comments
+#    elif [[ $@ == "-X POST jobs/10030/comments text=Starting investigation for job 10031" ]]; then
+#        echo '{"id": 1234}'
+#    elif [[ $@ =~ $'-X POST jobs/10031/comments text=Automatic investigation jobs for job 10031:\n\nfoo' ]]; then
+#        echo true > "$comment_for_job_31_created"
+#    elif [[ $@ == "-X POST jobs/10032/comments text=Starting investigation for job 10032" ]]; then
+#        echo '{"id": 1237}'
+    elif [[ $@ =~ "-X PUT jobs/3000/comments/1236" ]]; then
+        warn "Commenting 3000 ($@)"
+        exit 99
+#    elif [[ $@ =~ "-X POST jobs/30002/comments" ]]; then
+#        warn "Commenting 30002 ($@)"
+#        exit 99
+    elif [[ $@ =~ "-X PUT jobs/3003/comments/1236" ]]; then
+       warn "Commenting 3003 ($@)"
+        exit 99
+
     # GET jobs/id/comments
     elif [[ $@ == "-X GET jobs/10030/comments" ]]; then
         echo '[{"id": 1234, "text":"Starting investigation for 10031"},{"id": 1235, "text":"unrelated comment"}]'
     elif [[ $@ == "-X GET jobs/10032/comments" ]]; then
         echo '[{"id": 1236, "text":"Starting investigation for job 10032"},{"id": 1237, "text":"Starting investigation for job 10032"}]'
     elif [[ $@ == "-X GET jobs/3000/comments" ]]; then
-        echo '[{"id": 1236, "text":"Automatic investigation jobs for job\n**a:investigate:retry**:url/t30001\n**a:investigate:last_good_tests:coffee**:url/t30002\n**a:investigate:last_good_build:2001**:url/t30003\n**a:investigate:last_good_tests_and_build:coffee+2001**:url/t30004"}]'
+        echo '[{"id": 1236, "text":"### Automatic investigation jobs for job\n**a:investigate:retry**:url/t30001\n**a:investigate:last_good_tests:coffee**:url/t30002\n**a:investigate:last_good_build:2001**:url/t30003\n**a:investigate:last_good_tests_and_build:coffee+2001**:url/t30004"}]'
     elif [[ $@ == "-X GET jobs/3002/comments" ]]; then
-        echo '[{"id": 1236, "text":"Automatic investigation jobs for job\n**a:investigate:retry**:url/t30021\n**a:investigate:last_good_tests:coffee**:url/t30022\n**a:investigate:last_good_build:2001**:url/t30023\n**a:investigate:last_good_tests_and_build:coffee+2001**:url/t34024"}]'
+        echo '[{"id": 1236, "text":"### Automatic investigation jobs for job\n**a:investigate:retry**:url/t30021\n**a:investigate:last_good_tests:coffee**:url/t30022\n**a:investigate:last_good_build:2001**:url/t30023\n**a:investigate:last_good_tests_and_build:coffee+2001**:url/t34024"}]'
     elif [[ $@ == "-X GET jobs/3003/comments" ]]; then
-        echo '[{"id": 1236, "text":"Automatic investigation jobs for job\n**a:investigate:retry**:url/t30031\n**a:investigate:last_good_tests:coffee**:url/t30032\n**a:investigate:last_good_build:2001**:url/t30033\n**a:investigate:last_good_tests_and_build:coffee+2001**:url/t30034"}]'
+        echo '[{"id": 1236, "text":"### Automatic investigation jobs for job\n**a:investigate:retry**:url/t30031\n**a:investigate:last_good_tests:coffee**:url/t30032\n**a:investigate:last_good_build:2001**:url/t30033\n**a:investigate:last_good_tests_and_build:coffee+2001**:url/t30034"}]'
 
     # PUT jobs/id/comments/id
-    elif [[ $@ =~ $'-X PUT jobs/10030/comments/1234 text=Automatic investigation jobs for job 10031:\n\nfoo' ]]; then
+    elif [[ $@ =~ $'-X PUT jobs/10030/comments/1234 text=### Automatic investigation jobs for job 10031:\n\nfoo' ]]; then
         echo true > "$comment_1234_updated"
 
     # DELETE jobs/id/comments/id
@@ -175,19 +192,19 @@ test-post-investigate() {
     is "$rc" 2 'mocked function returned failure (30001)'
     has "$got" "Commenting 3000" "Posting comment on OPENQA_INVESTIGATE_ORIGIN (30001)"
     has "$got" "Investigate retry job **vim:investigate:retry**" "retry test name appears in comment(30001)"
-    has "$got" "likely a product issue" "product issue (30001)"
+    has "$got" "Likely a product issue" "product issue (30001)"
 
     # retry passed
     try investigate 30003
     is "$rc" 2 'mocked function returned failure (30003)'
     has "$got" "Commenting 3000" "Posting comment on OPENQA_INVESTIGATE_ORIGIN (30003)"
-    has "$got" "likely a sporadic" "sporadic (passed) (30003)"
+    has "$got" "Likely a sporadic" "sporadic (passed) (30003)"
 
     # retry softfailed
     try investigate 30003
     is "$rc" 2 'mocked function returned failure (30003)'
     has "$got" "Commenting 3000" "Posting comment on OPENQA_INVESTIGATE_ORIGIN (30003)"
-    has "$got" "likely a sporadic" "sporadic (softfailed) (30003)"
+    has "$got" "Likely a sporadic" "sporadic (softfailed) (30003)"
 
     # retry softfailed
     try investigate 30005
@@ -199,7 +216,7 @@ test-post-investigate() {
     is "$rc" 2 'mocked function returned failure (30031)'
     has "$got" "Commenting 3003" "Posting comment on OPENQA_INVESTIGATE_ORIGIN (30031)"
     has "$got" "Investigate retry job **vim:investigate:retry**" "retry test name appears in comment(30031)"
-    has "$got" "likely a test issue" "test issue (30031)"
+    has "$got" "Likely a test issue" "test issue (30031)"
 
     # 142 not finished yet
     local job_data='{"job": { "result": "failed", "settings": { "OPENQA_INVESTIGATE_ORIGIN": "https://localhost/t3002" } } }'
@@ -210,6 +227,9 @@ test-post-investigate() {
     t1="fail"
 
     t2="passed" t3="passed" t4="passed"
+    fetch-investigate-comment() {
+        echo '{"id":314159,"text":"lala"}'
+    }
     fetch-investigation-results() {
         echo "retry|1|$t1
 last_good_tests|2|$t2
@@ -316,6 +336,7 @@ ok "$([[ -s $comment_1234_deleted ]])" \
 ok "$([[ ! -s $comment_for_job_31_created ]])" \
     'no comment on job 10031 created'
 
+diag "!!!!!!!!!!!!!!!!!!!!"
 # test finalizing investigation comment when investigation jobs had been created
 ok "$(force=true finalize_investigation_comment 10031 10030 1234 'foo' 2>&1)" \
     'success if we write an investigation comment'
