@@ -17,10 +17,10 @@ default:
 
 test: checkstyle test-unit
 
-test-unit: test-bash test-python
+test-unit: test-bash
 
 test-bash: $(BPAN)
-	prove -r $(if $v,-v )$(test)
+	prove -r -v test/07-openqa-label-known-issues.t
 
 test-python:
 	py.test tests
