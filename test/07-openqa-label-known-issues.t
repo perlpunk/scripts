@@ -40,10 +40,10 @@ comment_on_job() {
 }
 out=''
 hxnormalize() {
-    echo "$out";
+    cat "$out"
 }
 hxselect() {
-    echo "$out";
+    cat "$out"
 }
 
 try investigate_issue
