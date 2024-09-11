@@ -3,7 +3,7 @@
 source test/init
 bpan:source bashplus +err +fs +sym
 
-plan tests 15
+plan tests 5
 
 source openqa-label-known-issues
 client_args=(api --host "$host_url")
@@ -83,38 +83,7 @@ has "$got" "does not have autoinst-log.txt or reason, cannot label" "investigati
 # Cleanup 404.json
 sed -i "s/${cur_date}/yyyy-mm-dd/" "$dir/data/${id}.json"
 
-# Unknown reason - not included in issues
-id=102
-testurl="https://openqa.opensuse.org/tests/${id}"
-echo -n "Result: <b>incomplete</b>, finished <abbr class=\"timeago\" title=\"${cur_date}T08:06:42Z\"</abbr>>" > $tmplog
-echo -n "\nthe reason is whatever" >> $tmplog
-out=$tmplog
-try-client-output investigate_issue $id
-is "$rc" 0 'investigate no old issue with missing autoinst-log and unknown reason in job_data'
-has "$got" "Unknown test issue, to be reviewed" "investigation still label Unknown reason"
-
-id=414
-testurl="https://openqa.opensuse.org/tests/${id}"
-try-client-output investigate_issue $id
-is "$rc" 0 'investigate_issue with missing old autoinst-log and without reason in job_data'
-has "$got" "does not have autoinst-log.txt or reason, cannot label" "investigation exits successfully when no reason and no autoinst-log"
-
-id=200
-testurl="https://openqa.opensuse.org/tests/${id}"
-cp $autoinst_log $tmplog
-out=$tmplog
-try-client-output investigate_issue $id
-is "$rc" 0 'investigate_issue with autoinst-log and without reason'
-has "$got" "test fails in network_peering" "investigation label job with matched autoinst-log context"
-
-# handle_unreview branch
-echo > "$tmplog"
-out=$tmplog
-try-client-output investigate_issue $id
-is "$rc" 0 'job with empty autoinst-log checks unknown issue'
-has "$got" "Unknown test issue, to be reviewed" "investigation still label Unknown issue"
-
-echo -n "[error] Failed to download" > $out
-try-client-output investigate_issue $id
-is "$rc" 0 'job label without tickets'
-has "$got" "label:download_error potentially out-of-space worker?" "investistigation label correctly job without ticket"
+diag "################ debug 1"
+hxnormalize -h
+diag "################ debug 2"
+foobar

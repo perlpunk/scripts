@@ -179,4 +179,8 @@ label_issue() {
     investigate_issue "$testurl"
 }
 
+foobar() {
+    hxnormalize -h
+}
+
 caller 0 > /dev/null || label_issue "$@"
