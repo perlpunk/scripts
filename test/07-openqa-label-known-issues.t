@@ -40,10 +40,11 @@ comment_on_job() {
 }
 out=''
 hxnormalize() {
-    echo "$out";
+    echo "$out"
 }
 hxselect() {
-    echo "$out";
+    cat "$out"
+#    cat | echo "$out"
 }
 
 try investigate_issue
@@ -84,6 +85,11 @@ has "$got" "does not have autoinst-log.txt or reason, cannot label" "investigati
 sed -i "s/${cur_date}/yyyy-mm-dd/" "$dir/data/${id}.json"
 
 diag "################ debug 1"
+type hxnormalize
+type hxselect
 hxnormalize -h
 diag "################ debug 2"
 foobar
+diag "################ debug 3"
+echo '<html><body><span class="foo">test</span></body></html>' | hxselect -s '\n' -c '.foo'
+diag "################ debug 4"
