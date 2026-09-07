@@ -382,7 +382,7 @@ class AutoSubmitter:
         git_cmd = shlex.split(self.git_cmd_str)
         add_cmd = [*git_cmd, "add", "--all"]
         commit_cmd = [*git_cmd, "commit", "--message", title]
-        push_cmd = [*git_cmd, "push", "-f", "origin", branch]
+        push_cmd = [*git_cmd, "push", "-f", "-u", "origin", branch]
 
         if self.dry_run:
             log.info("[dry-run] Would execute: %s", " ".join(add_cmd))
