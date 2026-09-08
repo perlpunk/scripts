@@ -450,9 +450,11 @@ class AutoSubmitter:
         if not forked_repo:
             return False
 
+        git_dir = pathlib.Path("../git-repos").resolve() / package
         original_dir = pathlib.Path.cwd()
         if not self.dry_run:
-            os.chdir(package)
+            git_dir.mkdir(parents=True, exist_ok=True)
+            os.chdir(git_dir)
 
         try:
             self._prepare_local_clone(package, branch)
