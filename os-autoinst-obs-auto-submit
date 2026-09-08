@@ -335,6 +335,10 @@ class AutoSubmitter:
             log.error("Forked repository name not found in fork command output.")
             return ""
 
+        if os.path.exists(package):
+            log.info("Directory %s already exists, not cloning", package);
+            return forked_repo
+
         clone_cmd = [*git_obs_cmd, "repo", "clone", "--no-ssh-strict-host-key-checking", forked_repo]
         if self.dry_run:
             log.info("[dry-run] Would execute: %s", " ".join(clone_cmd))
