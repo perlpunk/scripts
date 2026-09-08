@@ -362,8 +362,10 @@ class AutoSubmitter:
             _run_cmd(fetch_cmd, check=True)
             _run_cmd(switch_cmd, check=True)
 
+            # Delete and replace every file that we have just generated.
+            # Keep special files that only exist in the git tree.
             for item in pathlib.Path().iterdir():
-                if item.name == ".git":
+                if item.name in (".git", ".gitignore", ".gitattributes"):
                     continue
                 if item.is_dir():
                     shutil.rmtree(item)
